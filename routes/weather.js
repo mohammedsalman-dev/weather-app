@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { getCoordinates, getWeather } = require('../services/weatherService');
 const { saveWeather, getWeatherHistory } = require('../services/weatherDbService');
+const { getWeatherSchema, saveWeatherSchema } = require('../validators/weatherDto');
+const validate = require('../middlewares/validate');
 
 // GET /
 router.get('/', (req, res) => {
@@ -9,9 +11,8 @@ router.get('/', (req, res) => {
 });
 
 // POST /api/weather
-router.post('/api/weather', async (req, res) => {
+router.post('/api/weather', validate(getWeatherSchema), async (req, res) => {
   const { address } = req.body;
-  if (!address) return res.status(400).json({ error: 'Address is required.' });
 
   try {
     const { lat, lon, location } = await getCoordinates(address);
@@ -31,11 +32,8 @@ router.post('/api/weather', async (req, res) => {
 });
 
 // POST /api/save-weather
-router.post('/api/save-weather', async (req, res) => {
+router.post('/api/save-weather', validate(saveWeatherSchema), async (req, res) => {
   const { address, lat, lon, weatherData } = req.body;
-  if (!address || !lat || !lon || !weatherData) {
-    return res.status(400).json({ error: 'Missing required fields.' });
-  }
 
   try {
     await saveWeather({ address, lat, lon, weatherData });
