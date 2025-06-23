@@ -16,4 +16,3 @@ export async function getWeatherHistory() {
   );
   return rows;
 }
-

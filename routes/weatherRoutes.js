@@ -1,8 +1,7 @@
 import express from 'express';
-import { getCoordinates, getWeather } from '../services/weatherService.js';
-import { saveWeather, getWeatherHistory } from '../services/weatherDbService.js';
-import { getWeatherSchema, saveWeatherSchema } from '../validators/weatherDto.js';
-import validate from '../middlewares/validate.js';
+import { getCoordinates, getWeather, saveWeather, getWeatherHistory } from '../services/index.js';
+import { getWeatherSchema, saveWeatherSchema } from '../validators/index.js';
+import { validate } from '../middlewares/index.js';
 
 const router = express.Router();
 

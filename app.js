@@ -3,7 +3,7 @@ import nunjucks from 'nunjucks';
 import dotenv from 'dotenv';
 
 import db from './db/connection.js';
-import weatherRoutes from './routes/weather.js';
+import { weatherRoutes } from './routes/index.js';
 
 dotenv.config();
 
