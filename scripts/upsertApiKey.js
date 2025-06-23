@@ -1,6 +1,6 @@
-// scripts/upsertApiKey.js
 import db from '../db/connection.js';
 import dotenv from 'dotenv';
+import logger from '../logger.js';
 dotenv.config();
 
 const { MAPBOX_API_KEY, OPENWEATHER_API_KEY } = process.env;
@@ -19,16 +19,16 @@ async function upsertApiKeys() {
           service,
           key_value
         ]);
-        console.log(`✅ Inserted new API key for '${service}'`);
+        logger.info(`✅ Inserted new API key for '${service}'`);
       } else {
         await db.query('UPDATE api_keys SET key_value = ? WHERE service = ?', [key_value, service]);
-        console.log(`♻️  Updated API key for '${service}'`);
+        logger.info(`♻️  Updated API key for '${service}'`);
       }
     }
 
     process.exit(0);
   } catch (err) {
-    console.error('❌ Upsert failed:', err.message);
+    logger.error('❌ Upsert failed:', err.message);
     process.exit(1);
   }
 }

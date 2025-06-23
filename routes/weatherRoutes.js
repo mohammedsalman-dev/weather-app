@@ -3,6 +3,8 @@ import { getCoordinates, getWeather, saveWeather, getWeatherHistory } from '../s
 import { getWeatherSchema, saveWeatherSchema } from '../validators/index.js';
 import { validate } from '../middlewares/index.js';
 
+import logger from '../logger.js';
+
 const router = express.Router();
 
 // GET /
@@ -26,7 +28,7 @@ router.post('/api/weather', validate(getWeatherSchema), async (req, res) => {
       hourly: weatherData.hourly.slice(0, 6)
     });
   } catch (error) {
-    console.error('❌ Weather error:', error.message);
+    logger.error('❌ Weather error:', error.message);
     res.status(500).json({ error: 'Failed to get weather data.' });
   }
 });
@@ -39,7 +41,7 @@ router.post('/api/save-weather', validate(saveWeatherSchema), async (req, res) =
     await saveWeather({ address, lat, lon, weatherData });
     res.json({ message: '✅ Weather data saved successfully.' });
   } catch (error) {
-    console.error('❌ Save error:', error.message);
+    logger.error('❌ Save error:', error.message);
     res.status(500).json({ error: 'Failed to save weather.' });
   }
 });
@@ -50,7 +52,7 @@ router.get('/api/history', async (req, res) => {
     const data = await getWeatherHistory();
     res.json(data);
   } catch (error) {
-    console.error('❌ History error:', error.message);
+    logger.error('❌ History error:', error.message);
     res.status(500).json({ error: 'Failed to fetch history.' });
   }
 });

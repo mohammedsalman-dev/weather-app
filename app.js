@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import db from './db/connection.js';
 import { weatherRoutes } from './routes/index.js';
 
+import logger from './logger.js';
 dotenv.config();
 
 const app = express();
@@ -28,14 +29,14 @@ app.use('/', weatherRoutes);
 async function startServer() {
   try {
     await db.query('SELECT 1');
-    console.log('✅ MySQL connected successfully.');
+    logger.info('✅ MySQL connected successfully.');
 
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
-      console.log(`🚀 Server started on port ${PORT}`);
+      logger.info(`🚀 Server started on port ${PORT}`);
     });
   } catch (error) {
-    console.error('❌ MySQL connection failed:', error.message);
+    logger.error('❌ MySQL connection failed:', error.message);
     process.exit(1);
   }
 }
