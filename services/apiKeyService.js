@@ -1,8 +1,9 @@
-const db = require('../db/connection');
+import db from '../db/connection.js';
 
-async function getApiKey(service) {
-  const [rows] = await db.query('SELECT key_value FROM api_keys WHERE service = ?', [service]);
+export async function getApiKey(service) {
+  const [rows] = await db.query(
+    'SELECT key_value FROM api_keys WHERE service = ?',
+    [service]
+  );
   return rows.length ? rows[0].key_value : null;
 }
-
-module.exports = { getApiKey };

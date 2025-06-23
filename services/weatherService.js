@@ -1,7 +1,7 @@
-const axios = require('axios');
-const { getApiKey } = require('./apiKeyService');
+import axios from 'axios';
+import { getApiKey } from './apiKeyService.js';
 
-async function getCoordinates(address) {
+export async function getCoordinates(address) {
   const mapboxKey = await getApiKey('mapbox');
   if (!mapboxKey) throw new Error('Mapbox API key not found.');
 
@@ -15,7 +15,7 @@ async function getCoordinates(address) {
   return { lat, lon, location: features[0].place_name };
 }
 
-async function getWeather(lat, lon) {
+export async function getWeather(lat, lon) {
   const weatherKey = await getApiKey('openweathermap');
   if (!weatherKey) throw new Error('OpenWeather API key not found.');
 
@@ -23,5 +23,3 @@ async function getWeather(lat, lon) {
   const weatherRes = await axios.get(url);
   return weatherRes.data;
 }
-
-module.exports = { getCoordinates, getWeather };

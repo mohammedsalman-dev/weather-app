@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import { getCoordinates, getWeather } from '../services/weatherService.js';
+import { saveWeather, getWeatherHistory } from '../services/weatherDbService.js';
+import { getWeatherSchema, saveWeatherSchema } from '../validators/weatherDto.js';
+import validate from '../middlewares/validate.js';
+
 const router = express.Router();
-const { getCoordinates, getWeather } = require('../services/weatherService');
-const { saveWeather, getWeatherHistory } = require('../services/weatherDbService');
-const { getWeatherSchema, saveWeatherSchema } = require('../validators/weatherDto');
-const validate = require('../middlewares/validate');
 
 // GET /
 router.get('/', (req, res) => {
@@ -55,4 +56,4 @@ router.get('/api/history', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const db = require('../db/connection');
+import db from '../db/connection.js';
 
-async function saveWeather({ address, lat, lon, weatherData }) {
+export async function saveWeather({ address, lat, lon, weatherData }) {
   return db.query(
     `INSERT INTO weather_history (address, latitude, longitude, weather_data)
      VALUES (?, ?, ?, ?)`,
@@ -8,7 +8,7 @@ async function saveWeather({ address, lat, lon, weatherData }) {
   );
 }
 
-async function getWeatherHistory() {
+export async function getWeatherHistory() {
   const [rows] = await db.query(
     `SELECT id, address, latitude, longitude, weather_data, created_at 
      FROM weather_history 
@@ -17,4 +17,3 @@ async function getWeatherHistory() {
   return rows;
 }
 
-module.exports = { saveWeather, getWeatherHistory };

@@ -1,17 +1,12 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-const getWeatherSchema = Joi.object({
+export const getWeatherSchema = Joi.object({
   address: Joi.string().required()
 });
 
-const saveWeatherSchema = Joi.object({
+export const saveWeatherSchema = Joi.object({
   address: Joi.string().required(),
   lat: Joi.number().required(),
   lon: Joi.number().required(),
   weatherData: Joi.object().required()
 });
-
-module.exports = {
-  getWeatherSchema,
-  saveWeatherSchema
-};
