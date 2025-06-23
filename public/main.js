@@ -1,5 +1,6 @@
 let currentWeather = null;
 
+// Loader control
 function showLoader() {
   $('#loader').show();
 }
@@ -7,6 +8,7 @@ function hideLoader() {
   $('#loader').hide();
 }
 
+// Search Weather
 $('#searchBtn').on('click', () => {
   const address = $('#addressInput').val().trim();
   if (!address) {
@@ -42,6 +44,24 @@ $('#searchBtn').on('click', () => {
             <p><strong>Temp:</strong> ${data.current.temp}°C</p>
             <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
             <p><strong>Conditions:</strong> ${data.current.weather[0].description}</p>
+            <p><strong>Wind:</strong> ${data.current.wind_speed} m/s</p>
+            <hr />
+            <h6>🕒 Hourly Forecast</h6>
+            <ul class="list-group list-group-flush">
+              ${data.hourly
+                .map((hour) => {
+                  const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  });
+                  return `
+                  <li class="list-group-item">
+                    <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
+                  </li>
+                `;
+                })
+                .join('')}
+            </ul>
           </div>
         </div>
       `);
@@ -59,6 +79,7 @@ $('#searchBtn').on('click', () => {
     });
 });
 
+// Save Weather
 $('#saveBtn').on('click', () => {
   if (!currentWeather) return alert('Search first.');
 
@@ -96,6 +117,7 @@ $('#saveBtn').on('click', () => {
     });
 });
 
+// Show Weather History
 $('#historyBtn').on('click', () => {
   $('#historyContainer').html('');
   showLoader();
@@ -118,13 +140,31 @@ $('#historyBtn').on('click', () => {
             : entry.weather_data;
 
         $('#historyContainer').append(`
-          <div class="card mb-3">
+          <div class="card mb-3 shadow-sm">
             <div class="card-body">
               <h5 class="card-title">${entry.address}</h5>
               <p><strong>Temp:</strong> ${weather.current.temp}°C</p>
               <p><strong>Humidity:</strong> ${weather.current.humidity}%</p>
               <p><strong>Weather:</strong> ${weather.current.weather[0].description}</p>
+              <p><strong>Wind:</strong> ${weather.current.wind_speed} m/s</p>
               <p><em>${new Date(entry.created_at).toLocaleString()}</em></p>
+              <hr />
+              <h6>🕒 Hourly Forecast</h6>
+              <ul class="list-group list-group-flush">
+                ${weather.hourly
+                  .map((hour) => {
+                    const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    });
+                    return `
+                    <li class="list-group-item">
+                      <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
+                    </li>
+                  `;
+                  })
+                  .join('')}
+              </ul>
             </div>
           </div>
         `);

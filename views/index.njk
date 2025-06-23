@@ -3,6 +3,7 @@
    <head>
       <meta charset="UTF-8" />
       <title>Weather App</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <!-- Styles -->
       <link
          rel="stylesheet"
@@ -17,7 +18,7 @@
    </head>
    <body class="bg-light">
       <div class="container mt-5">
-         <h1 class="mb-4">🌤 Weather Finder</h1>
+         <h1 class="mb-4 text-center">🌤 Weather Finder</h1>
          <div class="form-group">
             <input
                type="text"
@@ -26,24 +27,21 @@
                placeholder="Enter address..."
                />
          </div>
-         <button id="searchBtn" class="btn btn-primary">🔍 Get Weather</button>
-         <button id="saveBtn" class="btn btn-success" disabled>
-         💾 Save Weather
-         </button>
-         <button id="historyBtn" class="btn btn-secondary">📜 Show History</button>
-         <hr />
-         <!-- 🌟 Loader -->
-         <div id="loader">
-            <div class="sk-chase">
-               <div class="sk-chase-dot"></div>
-               <div class="sk-chase-dot"></div>
-               <div class="sk-chase-dot"></div>
-               <div class="sk-chase-dot"></div>
-               <div class="sk-chase-dot"></div>
-               <div class="sk-chase-dot"></div>
+         <div class="mb-4 text-center">
+            <button id="searchBtn" class="btn btn-primary">🔍 Get Weather</button>
+            <button id="saveBtn" class="btn btn-success" disabled>
+            💾 Save Weather
+            </button>
+            <button id="historyBtn" class="btn btn-secondary">📜 Show History</button>
+         </div>
+         <!-- Loader (initially hidden) -->
+         <div id="loader" class="text-center my-4" style="display: none">
+            <div class="spinner-border text-primary" role="status">
+               <span class="sr-only">Loading...</span>
             </div>
          </div>
          <div id="resultContainer" class="mt-4"></div>
+         <div id="hourlyContainer" class="mt-4"></div>
          <div id="historyContainer" class="mt-5"></div>
       </div>
       <!-- Scripts -->
