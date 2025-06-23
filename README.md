@@ -1,6 +1,3 @@
----
-
-```markdown
 # 🌦️ Weather Forecast App
 
 A full-stack Node.js application that provides real-time and historical weather data based on user input. Clean architecture with API key security, input validation, and a beautiful responsive UI.
