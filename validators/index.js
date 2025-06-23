@@ -1,1 +1,1 @@
-export { getWeatherSchema, saveWeatherSchema } from "./weatherDto.js"
+export { getWeatherSchema, saveWeatherSchema } from './weatherDto.js';

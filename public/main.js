@@ -9,8 +9,8 @@ $('#searchBtn').on('click', () => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ address })
   })
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       currentWeather = data;
       $('#saveBtn').prop('disabled', false);
 
@@ -25,7 +25,7 @@ $('#searchBtn').on('click', () => {
         </div>
       `);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       alert('❌ Failed to fetch weather');
     });
@@ -46,11 +46,11 @@ $('#saveBtn').on('click', () => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   })
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       alert(data.message || '✅ Saved');
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       alert('❌ Failed to save');
     });
@@ -60,14 +60,15 @@ $('#historyBtn').on('click', () => {
   $('#historyContainer').html('<p>Loading...</p>');
 
   fetch('/api/history')
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       $('#historyContainer').html('<h4 class="mt-5 mb-3">📜 Weather History</h4>');
 
-      data.forEach(entry => {
-        const weather = typeof entry.weather_data === 'string'
-          ? JSON.parse(entry.weather_data)
-          : entry.weather_data;
+      data.forEach((entry) => {
+        const weather =
+          typeof entry.weather_data === 'string'
+            ? JSON.parse(entry.weather_data)
+            : entry.weather_data;
 
         $('#historyContainer').append(`
           <div class="card mb-3">
@@ -82,7 +83,7 @@ $('#historyBtn').on('click', () => {
         `);
       });
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       $('#historyContainer').html('<p>❌ Failed to load history</p>');
     });

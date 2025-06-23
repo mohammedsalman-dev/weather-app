@@ -9,8 +9,6 @@ dotenv.config();
 
 const app = express();
 
-
-
 // Static, form parsing, JSON
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -36,7 +34,6 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`🚀 Server started on port ${PORT}`);
     });
-
   } catch (error) {
     console.error('❌ MySQL connection failed:', error.message);
     process.exit(1);
