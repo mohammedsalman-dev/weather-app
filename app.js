@@ -27,7 +27,7 @@ app.use('/', weatherRoutes);
 // DB check and start server
 async function startServer() {
   try {
-    const [rows] = await db.query('SELECT 1');
+    await db.query('SELECT 1');
     console.log('✅ MySQL connected successfully.');
 
     const PORT = process.env.PORT || 3000;
