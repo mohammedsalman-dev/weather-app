@@ -3,33 +3,32 @@
 ```markdown
 # 🌦️ Weather Forecast App
 
-This is a full-stack weather forecast application that allows users to:
+A full-stack Node.js application that provides real-time and historical weather data based on user input. Clean architecture with API key security, input validation, and a beautiful responsive UI.
 
-- Search for real-time weather information by address.
-- View hourly forecasts.
-- Save search results.
-- View history of saved weather data.
+---
 
 ## 🚀 Features
 
-- 🌍 Address geocoding using **Mapbox API**
-- 🌤 Current and hourly weather data using **OpenWeather API**
-- 🛢️ MySQL database integration for storing search history
-- 🧾 API key management via database (not hardcoded)
-- 🧼 Input validation using **Joi**
-- ✨ Beautiful UI with Toastify and SpinKit for toasts and loaders
-- 📦 Modular project structure with services and middlewares
+- 🔍 Search weather by **address**
+- 📍 Geocoding via **Mapbox API**
+- 🌤 Current & hourly forecast via **OpenWeather API**
+- 🧾 Save & retrieve weather history
+- 🔐 API keys stored securely in the **database**
+- ✅ Validation with **Joi**
+- ✨ Beautiful **Toastify** notifications & **SpinKit** loader
 - 🪵 Logging with **Winston**
+- 💅 ESLint + Prettier integration
+- 📁 Modular folder structure
 
 ---
 
 ## 🧑‍💻 Tech Stack
 
 - Backend: **Node.js**, **Express.js**
-- Database: **MySQL**
 - Frontend: **HTML**, **Bootstrap**, **jQuery**
+- Database: **MySQL**
 - APIs: **Mapbox**, **OpenWeather**
-- Extras: **ESLint**, **Prettier**, **Toastify**, **SpinKit**, **Winston**
+- Extras: **Toastify**, **SpinKit**, **Winston**, **Joi**, **ESLint**, **Prettier**
 
 ---
 
@@ -43,7 +42,8 @@ weather-app/
 ├── public/
 │ └── main.js
 ├── routes/
-│ └── weatherRoutes.js
+│ ├── weatherRoutes.js
+│ └── index.js
 ├── services/
 │ ├── weatherService.js
 │ ├── weatherDbService.js
@@ -57,6 +57,7 @@ weather-app/
 ├── scripts/
 │ └── seed.js
 ├── .env
+├── .env.example
 ├── app.js
 └── README.md
 
@@ -66,7 +67,7 @@ weather-app/
 
 ## ⚙️ Setup Instructions
 
-### 1. Clone the repo
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/mohammedsalman-dev/weather-app.git
@@ -84,28 +85,34 @@ npm install
 Create a `.env` file based on `.env.example`:
 
 ```env
-# .env
 PORT=3000
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_db_password
 DB_NAME=weather_app_db
+
+MAPBOX_API_KEY=your_mapbox_api_key
+OPENWEATHER_API_KEY=your_openweather_api_key
+
 MAPBOX_BASE_URL=https://api.mapbox.com
 OPENWEATHER_BASE_URL=https://api.openweathermap.org
 ```
 
-### 4. Setup database
+---
+
+### 4. Setup the MySQL Database
 
 ```sql
 CREATE DATABASE weather_app_db;
 
--- Create tables
+-- API keys table
 CREATE TABLE api_keys (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  service VARCHAR(100) NOT NULL,
+  service VARCHAR(100) NOT NULL UNIQUE,
   key_value TEXT NOT NULL
 );
 
+-- Weather history table
 CREATE TABLE weather_history (
   id INT AUTO_INCREMENT PRIMARY KEY,
   address VARCHAR(255),
@@ -116,59 +123,55 @@ CREATE TABLE weather_history (
 );
 ```
 
-### 5. Seed your API keys
+---
+
+## 🌱 API Key Seeding (Insert or Update)
+
+This app securely stores API keys in the database instead of hardcoding them in code.
+
+### 🔑 How to seed API keys
+
+Run the seed command to **insert** or **update** (`upsert`) API keys from `.env`:
 
 ```bash
-node scripts/seed.js
+npm run seed
 ```
 
-Or update later with:
+- ✅ If the key doesn't exist → it will be **inserted**
+- 🔁 If the key exists → it will be **updated**
 
-```bash
-node scripts/updateKeys.js
-```
-
-### 6. Run the application
-
-```bash
-npm start
-```
+> ⚠️ This makes `npm run seed` idempotent and safe to run multiple times
 
 ---
 
-## 🧪 Useful Commands
+## 🧪 Useful Scripts
 
-```bash
-npm run start      # Start app with nodemon
-npm run lint       # Run ESLint
-npm run format     # Format code with Prettier
-npm run seed       # Seed API Keys from .env file
-```
-
----
-
-## 📚 Notes
-
-- API keys are securely stored in the database.
-- Input validation is handled using **Joi**.
-- Project follows modular and scalable architecture.
+| Script           | Description                     |
+| ---------------- | ------------------------------- |
+| `npm start`      | Run the server with **nodemon** |
+| `npm run lint`   | Run **ESLint** for code quality |
+| `npm run format` | Format code with **Prettier**   |
+| `npm run seed`   | Upsert API keys into database   |
 
 ---
 
 ## ✅ Assignment Checklist
 
-- [x] Real-time weather using address ✅
-- [x] Save and view past searches ✅
-- [x] Code structured and reusable ✅
-- [x] API keys not hardcoded ✅
-- [x] Environment config via `.env` ✅
-- [x] Beautiful UI feedback with toasts/loaders ✅
+- [x] Real-time weather via address input
+- [x] Save & retrieve historical searches
+- [x] API keys managed securely via DB
+- [x] Input validation with Joi
+- [x] Logs handled with Winston (no `console.log`)
+- [x] Toastify notifications and SpinKit loaders
+- [x] Code formatting via ESLint & Prettier
 
 ---
 
 ## 📧 Author
 
-**Your Name**
-[GitHub](https://github.com/mohammedsalman-dev) | [Email](mailto:mohammad.salman@neosoftmail.com)
+**Mohammed Salman**
+
+- GitHub: [@mohammedsalman-dev](https://github.com/mohammedsalman-dev)
+- Email: [mohammad.salman@neosoftmail.com](mailto:mohammad.salman@neosoftmail.com)
 
 ---
