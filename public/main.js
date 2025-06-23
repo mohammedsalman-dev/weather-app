@@ -2,7 +2,14 @@ let currentWeather = null;
 
 $('#searchBtn').on('click', () => {
   const address = $('#addressInput').val().trim();
-  if (!address) return alert('❗ Please enter an address');
+  if (!address)
+    return Toastify({
+      text: '❗ Please enter an address',
+      duration: 3000,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: '#4CAF50'
+    }).showToast();
 
   fetch('/api/weather', {
     method: 'POST',
@@ -27,7 +34,13 @@ $('#searchBtn').on('click', () => {
     })
     .catch((err) => {
       console.error(err);
-      alert('❌ Failed to fetch weather');
+      Toastify({
+        text: '❌ Failed to fetch weather',
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: '#4CAF50'
+      }).showToast();
     });
 });
 
@@ -48,11 +61,23 @@ $('#saveBtn').on('click', () => {
   })
     .then((res) => res.json())
     .then((data) => {
-      alert(data.message || '✅ Saved');
+      Toastify({
+        text: data.message || '✅ Saved',
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: '#4CAF50'
+      }).showToast();
     })
     .catch((err) => {
       console.error(err);
-      alert('❌ Failed to save');
+      Toastify({
+        text: '❌ Failed to save',
+        duration: 3000,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: '#4CAF50'
+      }).showToast();
     });
 });
 
