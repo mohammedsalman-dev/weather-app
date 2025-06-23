@@ -1,5 +1,3 @@
-Absolutely! Here's a well-structured and professional `README.md` file for your **Weather App Assignment** submission:
-
 ---
 
 ```markdown
@@ -36,6 +34,7 @@ This is a full-stack weather forecast application that allows users to:
 ---
 
 ## 📁 Project Structure
+
 ```
 
 weather-app/
@@ -61,7 +60,7 @@ weather-app/
 ├── app.js
 └── README.md
 
-````
+```
 
 ---
 
@@ -72,7 +71,7 @@ weather-app/
 ```bash
 git clone https://github.com/mohammedsalman-dev/weather-app.git
 cd weather-app
-````
+```
 
 ### 2. Install dependencies
 
