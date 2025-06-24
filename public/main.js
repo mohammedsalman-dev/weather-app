@@ -8,21 +8,98 @@ function hideLoader() {
   $('#loader').hide();
 }
 
-// Search Weather
+// Toast helper
+function showToast(message, success = true) {
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: 'top',
+    position: 'right',
+    backgroundColor: success ? '#4CAF50' : '#ff6b6b'
+  }).showToast();
+}
+
+// Generate hourly forecast list HTML
+function renderHourlyForecast(hourly) {
+  return hourly
+    .map((hour) => {
+      const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      return `
+        <li class="list-group-item">
+          <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
+        </li>
+      `;
+    })
+    .join('');
+}
+
+// Render current weather
+function renderCurrentWeather(data) {
+  return `
+    <h4 class="mt-4 mb-3 sticky-title">🌤 Weather Details</h4>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body">
+            <h5 class="card-title">${data.location}</h5>
+            <p><strong>Temp:</strong> ${data.current.temp}°C</p>
+            <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
+            <p><strong>Conditions:</strong> ${data.current.weather[0].description}</p>
+            <p><strong>Wind:</strong> ${data.current.wind_speed} m/s</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body overflow-auto hourly-scroll">
+            <h6 class="mb-3">🕒 Hourly Forecast</h6>
+            <ul class="list-group list-group-flush">
+              ${renderHourlyForecast(data.hourly)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Render history entry
+function renderHistoryEntry(entry, weather) {
+  return `
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="card-title">${entry.address}</h5>
+            <p><strong>Temp:</strong> ${weather.current.temp}°C</p>
+            <p><strong>Humidity:</strong> ${weather.current.humidity}%</p>
+            <p><strong>Weather:</strong> ${weather.current.weather[0].description}</p>
+            <p><strong>Wind:</strong> ${weather.current.wind_speed} m/s</p>
+            <p><em>${new Date(entry.created_at).toLocaleString()}</em></p>
+          </div>
+          <div class="col-md-6">
+            <h6>🕒 Hourly Forecast</h6>
+            <div class="overflow-auto hourly-scroll">
+              <ul class="list-group list-group-flush">
+                ${renderHourlyForecast(weather.hourly)}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Handle Search
 $('#searchBtn').on('click', () => {
   const address = $('#addressInput').val().trim();
-  if (!address) {
-    return Toastify({
-      text: '❗ Please enter an address',
-      duration: 3000,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: '#ff6b6b'
-    }).showToast();
-  }
+  if (!address) return showToast('❗ Please enter an address', false);
 
-  $('#resultContainer').empty();
-  $('#historyContainer').empty();
+  $('#resultContainer, #historyContainer').empty();
   $('#saveBtn').prop('disabled', true);
   showLoader();
 
@@ -36,104 +113,43 @@ $('#searchBtn').on('click', () => {
       currentWeather = data;
       $('#saveBtn').prop('disabled', false);
       hideLoader();
-
-      $('#resultContainer').html(`
-        <h4 class="mt-4 mb-3 sticky-title">🌤 Weather Details</h4>
-        <div class="row">
-          <!-- Current Weather -->
-          <div class="col-md-6 mb-3">
-            <div class="card shadow-sm border-0 h-100">
-              <div class="card-body">
-                <h5 class="card-title">${data.location}</h5>
-                <p><strong>Temp:</strong> ${data.current.temp}°C</p>
-                <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
-                <p><strong>Conditions:</strong> ${data.current.weather[0].description}</p>
-                <p><strong>Wind:</strong> ${data.current.wind_speed} m/s</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hourly Forecast -->
-          <div class="col-md-6 mb-3">
-            <div class="card shadow-sm border-0 h-100">
-              <div class="card-body overflow-auto hourly-scroll">
-                <h6 class="mb-3">🕒 Hourly Forecast</h6>
-                <ul class="list-group list-group-flush">
-                  ${data.hourly
-                    .map((hour) => {
-                      const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      });
-                      return `
-                        <li class="list-group-item">
-                          <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
-                        </li>
-                      `;
-                    })
-                    .join('')}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      `);
+      $('#resultContainer').html(renderCurrentWeather(data));
+      $('#addressInput').val('');
     })
     .catch((err) => {
       console.error(err);
       hideLoader();
-      Toastify({
-        text: '❌ Failed to fetch weather',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: '#ff6b6b'
-      }).showToast();
+      showToast('❌ Failed to fetch weather', false);
     });
 });
 
-// Save Weather
+// Handle Save
 $('#saveBtn').on('click', () => {
   if (!currentWeather) return alert('Search first.');
-
-  const payload = {
-    address: currentWeather.location,
-    lat: currentWeather.lat,
-    lon: currentWeather.lon,
-    weatherData: currentWeather
-  };
 
   fetch('/api/save-weather', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      address: currentWeather.location,
+      lat: currentWeather.lat,
+      lon: currentWeather.lon,
+      weatherData: currentWeather
+    })
   })
     .then((res) => res.json())
     .then((data) => {
-      Toastify({
-        text: data.message || '✅ Saved successfully',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: '#4CAF50'
-      }).showToast();
+      showToast(data.message || '✅ Saved successfully');
     })
     .catch((err) => {
       console.error(err);
-      Toastify({
-        text: '❌ Failed to save',
-        duration: 3000,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: '#ff6b6b'
-      }).showToast();
+      showToast('❌ Failed to save', false);
     });
 });
 
-// Show Weather History
+// Handle History
 $('#historyBtn').on('click', () => {
-  $('#resultContainer').empty();
-  $('#historyContainer').empty();
+  $('#resultContainer, #historyContainer').empty();
   $('#addressInput').val('');
   $('#saveBtn').prop('disabled', true);
   showLoader();
@@ -154,46 +170,7 @@ $('#historyBtn').on('click', () => {
           typeof entry.weather_data === 'string'
             ? JSON.parse(entry.weather_data)
             : entry.weather_data;
-
-        $('#historyContainer').append(`
-          <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-              <div class="row">
-                <!-- Current Weather -->
-                <div class="col-md-6">
-                  <h5 class="card-title">${entry.address}</h5>
-                  <p><strong>Temp:</strong> ${weather.current.temp}°C</p>
-                  <p><strong>Humidity:</strong> ${weather.current.humidity}%</p>
-                  <p><strong>Weather:</strong> ${weather.current.weather[0].description}</p>
-                  <p><strong>Wind:</strong> ${weather.current.wind_speed} m/s</p>
-                  <p><em>${new Date(entry.created_at).toLocaleString()}</em></p>
-                </div>
-
-                <!-- Hourly Forecast -->
-                <div class="col-md-6">
-                  <h6>🕒 Hourly Forecast</h6>
-                  <div class="overflow-auto hourly-scroll">
-                    <ul class="list-group list-group-flush">
-                      ${weather.hourly
-                        .map((hour) => {
-                          const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          });
-                          return `
-                            <li class="list-group-item">
-                              <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
-                            </li>
-                          `;
-                        })
-                        .join('')}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `);
+        $('#historyContainer').append(renderHistoryEntry(entry, weather));
       });
     })
     .catch((err) => {
