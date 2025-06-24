@@ -23,7 +23,6 @@ $('#searchBtn').on('click', () => {
 
   $('#resultContainer').empty();
   $('#historyContainer').empty();
-
   $('#saveBtn').prop('disabled', true);
   showLoader();
 
@@ -39,31 +38,43 @@ $('#searchBtn').on('click', () => {
       hideLoader();
 
       $('#resultContainer').html(`
-        <h4 class="mt-4 mb-3">🌤 Current Weather</h4>
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title">${data.location}</h5>
-            <p><strong>Temp:</strong> ${data.current.temp}°C</p>
-            <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
-            <p><strong>Conditions:</strong> ${data.current.weather[0].description}</p>
-            <p><strong>Wind:</strong> ${data.current.wind_speed} m/s</p>
-            <hr />
-            <h6>🕒 Hourly Forecast</h6>
-            <ul class="list-group list-group-flush">
-              ${data.hourly
-                .map((hour) => {
-                  const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  });
-                  return `
-                  <li class="list-group-item">
-                    <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
-                  </li>
-                `;
-                })
-                .join('')}
-            </ul>
+        <h4 class="mt-4 mb-3 sticky-title">🌤 Weather Details</h4>
+        <div class="row">
+          <!-- Current Weather -->
+          <div class="col-md-6 mb-3">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body">
+                <h5 class="card-title">${data.location}</h5>
+                <p><strong>Temp:</strong> ${data.current.temp}°C</p>
+                <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
+                <p><strong>Conditions:</strong> ${data.current.weather[0].description}</p>
+                <p><strong>Wind:</strong> ${data.current.wind_speed} m/s</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hourly Forecast -->
+          <div class="col-md-6 mb-3">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body overflow-auto hourly-scroll">
+                <h6 class="mb-3">🕒 Hourly Forecast</h6>
+                <ul class="list-group list-group-flush">
+                  ${data.hourly
+                    .map((hour) => {
+                      const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      });
+                      return `
+                        <li class="list-group-item">
+                          <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
+                        </li>
+                      `;
+                    })
+                    .join('')}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       `);
@@ -123,6 +134,7 @@ $('#saveBtn').on('click', () => {
 $('#historyBtn').on('click', () => {
   $('#resultContainer').empty();
   $('#historyContainer').empty();
+  $('#addressInput').val('');
   $('#saveBtn').prop('disabled', true);
   showLoader();
 
@@ -130,7 +142,7 @@ $('#historyBtn').on('click', () => {
     .then((res) => res.json())
     .then((data) => {
       hideLoader();
-      $('#historyContainer').html('<h4 class="mt-5 mb-3">📜 Weather History</h4>');
+      $('#historyContainer').html('<h4 class="mt-5 mb-3 sticky-title">📜 Weather History</h4>');
 
       if (!data.length) {
         $('#historyContainer').append('<p>No history found.</p>');
@@ -144,31 +156,41 @@ $('#historyBtn').on('click', () => {
             : entry.weather_data;
 
         $('#historyContainer').append(`
-          <div class="card mb-3 shadow-sm">
+          <div class="card mb-4 shadow-sm">
             <div class="card-body">
-              <h5 class="card-title">${entry.address}</h5>
-              <p><strong>Temp:</strong> ${weather.current.temp}°C</p>
-              <p><strong>Humidity:</strong> ${weather.current.humidity}%</p>
-              <p><strong>Weather:</strong> ${weather.current.weather[0].description}</p>
-              <p><strong>Wind:</strong> ${weather.current.wind_speed} m/s</p>
-              <p><em>${new Date(entry.created_at).toLocaleString()}</em></p>
-              <hr />
-              <h6>🕒 Hourly Forecast</h6>
-              <ul class="list-group list-group-flush">
-                ${weather.hourly
-                  .map((hour) => {
-                    const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    });
-                    return `
-                      <li class="list-group-item">
-                        <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
-                      </li>
-                    `;
-                  })
-                  .join('')}
-              </ul>
+              <div class="row">
+                <!-- Current Weather -->
+                <div class="col-md-6">
+                  <h5 class="card-title">${entry.address}</h5>
+                  <p><strong>Temp:</strong> ${weather.current.temp}°C</p>
+                  <p><strong>Humidity:</strong> ${weather.current.humidity}%</p>
+                  <p><strong>Weather:</strong> ${weather.current.weather[0].description}</p>
+                  <p><strong>Wind:</strong> ${weather.current.wind_speed} m/s</p>
+                  <p><em>${new Date(entry.created_at).toLocaleString()}</em></p>
+                </div>
+
+                <!-- Hourly Forecast -->
+                <div class="col-md-6">
+                  <h6>🕒 Hourly Forecast</h6>
+                  <div class="overflow-auto hourly-scroll">
+                    <ul class="list-group list-group-flush">
+                      ${weather.hourly
+                        .map((hour) => {
+                          const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          });
+                          return `
+                            <li class="list-group-item">
+                              <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
+                            </li>
+                          `;
+                        })
+                        .join('')}
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         `);
