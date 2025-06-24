@@ -22,6 +22,8 @@ $('#searchBtn').on('click', () => {
   }
 
   $('#resultContainer').empty();
+  $('#historyContainer').empty();
+
   $('#saveBtn').prop('disabled', true);
   showLoader();
 
@@ -119,7 +121,9 @@ $('#saveBtn').on('click', () => {
 
 // Show Weather History
 $('#historyBtn').on('click', () => {
-  $('#historyContainer').html('');
+  $('#resultContainer').empty();
+  $('#historyContainer').empty();
+  $('#saveBtn').prop('disabled', true);
   showLoader();
 
   fetch('/api/history')
@@ -158,10 +162,10 @@ $('#historyBtn').on('click', () => {
                       minute: '2-digit'
                     });
                     return `
-                    <li class="list-group-item">
-                      <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
-                    </li>
-                  `;
+                      <li class="list-group-item">
+                        <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
+                      </li>
+                    `;
                   })
                   .join('')}
               </ul>

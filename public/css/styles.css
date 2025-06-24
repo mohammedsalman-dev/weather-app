@@ -85,3 +85,34 @@
     transform: scale(1);
   }
 }
+
+#historyContainer {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+#historyContainer h4 {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 10;
+  padding: 10px 0;
+  margin: 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+#historyContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+#historyContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+#historyContainer::-webkit-scrollbar-track {
+  background-color: transparent;
+}
