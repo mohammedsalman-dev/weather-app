@@ -20,16 +20,20 @@ function showToast(message, success = true) {
 }
 
 // Generate hourly forecast list HTML
-function renderHourlyForecast(hourly) {
-  return hourly
+function renderHourlyForecast(hourlyData) {
+  return hourlyData
     .map((hour) => {
       const time = new Date(hour.dt * 1000).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit'
       });
+      const { description, icon } = hour.weather[0];
+      const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
       return `
-        <li class="list-group-item">
-          <strong>${time}</strong>: ${hour.temp}°C, ${hour.weather[0].description}, 💨 ${hour.wind_speed} m/s
+        <li class="list-group-item d-flex align-items-center">
+          <img src="${iconUrl}" alt="${description}" class="weather-icon-sm mr-2"/>
+          <strong>${time}</strong>: ${hour.temp}°C, ${description}, 💨 ${hour.wind_speed} m/s
         </li>
       `;
     })
@@ -38,20 +42,25 @@ function renderHourlyForecast(hourly) {
 
 // Render current weather
 function renderCurrentWeather(data) {
+  const { description, icon } = data.current.weather[0];
+  const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
   return `
     <h4 class="mt-4 mb-3 sticky-title">🌤 Weather Details</h4>
     <div class="row">
       <div class="col-md-6 mb-3">
         <div class="card shadow-sm border-0 h-100">
-          <div class="card-body">
+          <div class="card-body text-center">
             <h5 class="card-title">${data.location}</h5>
+            <img src="${iconUrl}" alt="${description}" class="weather-icon mb-3"/>
+            <p><strong>${description}</strong></p>
             <p><strong>Temp:</strong> ${data.current.temp}°C</p>
             <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
-            <p><strong>Conditions:</strong> ${data.current.weather[0].description}</p>
             <p><strong>Wind:</strong> ${data.current.wind_speed} m/s</p>
           </div>
         </div>
       </div>
+
       <div class="col-md-6 mb-3">
         <div class="card shadow-sm border-0 h-100">
           <div class="card-body overflow-auto hourly-scroll">
@@ -67,19 +76,24 @@ function renderCurrentWeather(data) {
 }
 
 // Render history entry
-function renderHistoryEntry(entry, weather) {
+function renderWeatherHistory(entry, weather) {
+  const { description, icon } = weather.current.weather[0];
+  const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
   return `
     <div class="card mb-4 shadow-sm">
       <div class="card-body">
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-6 text-center">
             <h5 class="card-title">${entry.address}</h5>
+            <img src="${iconUrl}" alt="${description}" class="weather-icon mb-3"/>
+            <p><strong>${description}</strong></p>
             <p><strong>Temp:</strong> ${weather.current.temp}°C</p>
             <p><strong>Humidity:</strong> ${weather.current.humidity}%</p>
-            <p><strong>Weather:</strong> ${weather.current.weather[0].description}</p>
             <p><strong>Wind:</strong> ${weather.current.wind_speed} m/s</p>
             <p><em>${new Date(entry.created_at).toLocaleString()}</em></p>
           </div>
+
           <div class="col-md-6">
             <h6>🕒 Hourly Forecast</h6>
             <div class="overflow-auto hourly-scroll">
@@ -170,7 +184,7 @@ $('#historyBtn').on('click', () => {
           typeof entry.weather_data === 'string'
             ? JSON.parse(entry.weather_data)
             : entry.weather_data;
-        $('#historyContainer').append(renderHistoryEntry(entry, weather));
+        $('#historyContainer').append(renderWeatherHistory(entry, weather));
       });
     })
     .catch((err) => {
